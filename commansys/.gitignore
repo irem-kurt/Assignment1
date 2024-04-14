@@ -1,0 +1,24 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+media/
+static/
+
+# Docker
+docker-compose.yml
+Dockerfile
+.env
+
+# PostgreSQL
+*.sql
+*.dump
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
