@@ -22,4 +22,5 @@ urlpatterns = [
     
     path('admin/', admin.site.urls),
     path("authenticate/", include("authenticate.urls")),
+    path("socio/", include("socio.urls"))
 ]

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_static_fontawesome',
     #'community',
     'authenticate',
+    'socio'
 ]
 LOCATION_FIELD = {
     'provider.google.api': '//maps.google.com/maps/api/js?sensor=false',
