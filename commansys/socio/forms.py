@@ -22,11 +22,11 @@ class CommunityForm(forms.ModelForm):
         })
     )
 
-    '''location = forms.CharField(
+    location = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Location...'
         })
-    )'''
+    )
 
     is_private = forms.BooleanField(
         required=False,
@@ -37,5 +37,6 @@ class CommunityForm(forms.ModelForm):
 
     class Meta:
         model = Community
-        #fields = ['name', 'description', 'picture', 'location', 'is_private']
-        fields = ['name', 'description', 'picture', 'is_private']
+        fields = ['name', 'description', 'picture', 'location', 'is_private']
+        
+        

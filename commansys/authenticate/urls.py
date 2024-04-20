@@ -2,11 +2,16 @@ from django.urls import path
 
 
 from . import views
+from .views import RegisterView  # Import the view here
 
 urlpatterns = [
-    path('', views.homepage, name=""),
+    path('', views.home, name="home"),
+    path('home', views.home, name='home'),
 
-    path('register', views.register, name="register"),
+    path('profile/<int:id>/', views.user_profile, name='user-profile'),
+
+    path('register/', RegisterView.as_view(), name='register'),
+
 
     path('my-login', views.my_login, name="my-login"),
 
