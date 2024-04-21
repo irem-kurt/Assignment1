@@ -7,7 +7,7 @@ from django import forms
 
 from django.forms.widgets import PasswordInput, TextInput
 
-from .models import models
+from .models import Profile, models
 
 
 # - Create/Register a user (Model Form)
@@ -79,3 +79,8 @@ class LoginForm(AuthenticationForm):
 
     username = forms.CharField(widget=TextInput())
     password = forms.CharField(widget=PasswordInput())
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['name', 'bio', 'birth_date', 'followers', 'unreadcount']

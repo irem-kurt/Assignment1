@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from .models import Tag
+
 from .forms import CommunityForm
 
 # Create your views here.
@@ -42,17 +42,12 @@ class CommunityCreateView(LoginRequiredMixin, View):
         }
         return render(request, 'socio/communitycreate.html', context)
 
-class CommunityView(LoginRequiredMixin, View):
-    def get(self, request, *args, pk, **kwargs):
-        print(pk)
-        print('irku')
-        community = Community.objects.get(pk=pk)
-        if request.user in community.followers:
-            context = {
-                'community': community,
-            }
-            return render(request, 'socio/community.html', context)
-        else:
-            return HttpResponse('You do not have permission to view this community.', status=403)
-        
+class PublicCommunityView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        communities = Community.objects.filter(is_private=False)
+        context = {
+            'community': communities
+        }
+        return render(request, 'socio/community-view.html', context)
+
     

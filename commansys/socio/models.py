@@ -6,15 +6,7 @@ from location_field.models.plain import PlainLocationField
 # Create your models here.
 
 
-class Tag(models.Model):
-    tag = models.TextField(default='', blank=False, null=False)
-    requester = models.ForeignKey(User, verbose_name='user', related_name='requester', blank=True, null=True, on_delete=models.SET_NULL)
-    toPerson = models.OneToOneField(User, verbose_name='user', related_name='toPerson', blank=True, null=True, on_delete=models.SET_NULL)
 
-    def __str__(self):
-        return self.tag
-    class Meta:
-        app_label = 'socio' 
 
 class Community(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE) #old creator
@@ -28,9 +20,8 @@ class Community(models.Model):
     followers = models.ManyToManyField(User, related_name='followed_communities')
     is_private = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
-    #category = models.ForeignKey(Tag, verbose_name='category', related_name='category', blank=True, null=True, on_delete=models.SET_NULL)
-
-
+    class Meta:
+        app_label = 'socio' 
 
 
 class NotifyUser(models.Model):

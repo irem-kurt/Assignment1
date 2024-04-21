@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="id_name">Name:</label><br>
+        {{ form.name }}
+        <br><br>
+        <label for="id_bio">Bio:</label><br>
+        {{ form.bio }}
+        <br><br>
+        <label for="id_birth_date">Birth Date:</label><br>
+        {{ form.birth_date }}
+        <br><br>
+        <!-- You can uncomment the following fields if needed -->
+        <!-- <label for="id_location">Location:</label><br> -->
+        <!-- {{ form.location }} -->
+        <!-- <br><br> -->
+        <!-- <label for="id_picture">Picture:</label><br> -->
+        <!-- {{ form.picture }} -->
+        <!-- <br><br> -->
+        <label for="id_followers">Followers:</label><br>
+        {{ form.followers }}
+        <br><br>
+        <!-- <label for="id_unreadcount">Unread Count:</label><br> -->
+        <!-- {{ form.unreadcount }} -->
+        <!-- <br><br> -->
+
+        <button type="submit">Edit Profile</button>
+        
+    </form>
+</body>
+</html>
