@@ -32,16 +32,7 @@ class NotifyUser(models.Model):
     offerPk = models.IntegerField(default=0)
 
 
-'''class Community(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    is_private = models.BooleanField(default=False)
-    is_deleted = models.BooleanField(default=False)
-    followers = models.ManyToManyField(User, related_name='followed_communities')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_communities')
-    managers = models.ManyToManyField(User, related_name='managed_communities')
-
-class PostTemplate(models.Model):
+'''class PostTemplate(models.Model):
     name = models.CharField(max_length=255)
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='templates')
     settings = models.JSONField()  # Assuming settings will be stored as JSON

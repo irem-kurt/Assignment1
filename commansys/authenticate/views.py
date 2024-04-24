@@ -1,22 +1,17 @@
 
 from .models import Profile
 from pyexpat.errors import messages
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render, redirect
-from django.urls import reverse
+
 from . forms import CreateUserForm, LoginForm, ProfileForm
 
 from django.contrib.auth.decorators import login_required
 
-
-from django.contrib.auth import login
 from .forms import CreateUserForm
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
-# - Authentication models and functions
 
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate
@@ -39,7 +34,10 @@ class RegisterView(View):
         form = self.form_class(request.POST)
 
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            '''user_profile = Profile(user=user, id=user.id)
+            user_profile.save()'''
 
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}')
@@ -101,8 +99,8 @@ def user_profile(request, id):
         'name': profile.name,
         'bio': profile.bio,
         'birth_date': profile.birth_date,
-        #'location': profile.location,
-        #'picture': profile.picture,
+        'location': profile.location,
+        'picture': profile.picture,
         'followers': profile.followers.all(),
         'unreadcount': profile.unreadcount
     }
@@ -110,34 +108,26 @@ def user_profile(request, id):
     # Render the user profile template with the context data
     return render(request, 'authenticate/user-profile.html', context)
 
-'''
-@login_required(login_url="my-login")
-def profile_list(request):
-    profiles = Profile.objects.exclude(user=request.user)
-    context = {"profiles": profiles}
-    return render(request, '/authenticate/profile-list.html', context)
-'''
+
 
 '''
-@login_required(login_url="my-login")
-def view_profile(request):
-    # Get the current user
-    username = request.session['username']
-
-    try:
-        # Try to retrieve the user's profile
-        user_profile = Profile.objects.get(email=username)
-    except Profile.DoesNotExist:
-        # If the profile does not exist, redirect to the edit profile page
-        return redirect('edit_profile')
-    print("user photo: " + str(user_profile.photo).split("'")[1])
-    user_photo = "/media/" + str(user_profile.photo).split("'")[1]
-
-    return render(request, 'profile.html', {'user_profile': user_profile, 'user_photo': user_photo})
+from django.contrib.auth.models import User
+def create_user_and_profile(request):
+    # Create a new user
+    user = User.objects.create(username='example_user', email='user@example.com')
+    
+    # Create a profile for the user
+    profile = Profile.objects.create(
+        user=user,
+        name='Example User',
+        bio='This is a bio',
+        birth_date=None,  # Set to whatever is appropriate
+        location='41.0255493,28.9742571',  # Set to default location
+        picture='example.jpg',  # Set to default picture
+        unreadcount=0  # Set to default unread count
+    )
+    return render(request, 'authenticate/user-profile.html', profile)
 '''
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Profile
 
 @login_required(login_url="my-login")
 def view_profile(request, id):
@@ -150,8 +140,8 @@ def view_profile(request, id):
         'name': profile.name,
         'bio': profile.bio,
         'birth_date': profile.birth_date,
-        # 'location': profile.location,
-        # 'picture': profile.picture,
+        'location': profile.location,
+        'picture': profile.picture,
         'followers': profile.followers.all(),
         'unreadcount': profile.unreadcount
     }

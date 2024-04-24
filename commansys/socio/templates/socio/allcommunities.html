@@ -29,17 +29,20 @@
 </head>
 <body>
     {% include "authenticate/navbar.html" %}
-    <div class="container">
-        <h1>Public Communities</h1>
+    <h1>All Communities</h1>
+    
+    <p>Number of communities: {{ communities_count }}</p>
+    
+    <ul>
         {% for community in communities %}
-        <div class="community-card">
-            <h2>{{ community.name }}</h2>
-            <p>Description: {{ community.description }}</p>
-            <!-- Add other community details here -->
-        </div>
+            <li>
+                <h3>{{ community.name }}</h3>
+
+                <!-- You can add more details as needed -->
+                <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 200px; max-height: 200px;">
+                <p>Description: {{ community.description }}</p>
+            </li>
         {% endfor %}
-    </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </ul>
 </body>
 </html>

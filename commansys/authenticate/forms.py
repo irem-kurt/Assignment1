@@ -16,36 +16,16 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-'''class CreateUserForm(UserCreationForm):
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    profile_picture = forms.ImageField(required=False)
 
-
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'profile_picture', 'password1', 'password2']
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("This email address is already in use. Please use a different email.")
-        return email
-'''
 
 class CreateUserForm(UserCreationForm):
     # fields we want to include and customize in our form
-    first_name = forms.CharField(max_length=100,
+    name = forms.CharField(max_length=100,
                                  required=True,
-                                 widget=forms.TextInput(attrs={'placeholder': 'First Name',
+                                 widget=forms.TextInput(attrs={'placeholder': 'Name',
                                                                'class': 'form-control',
                                                                }))
-    last_name = forms.CharField(max_length=100,
-                                required=True,
-                                widget=forms.TextInput(attrs={'placeholder': 'Last Name',
-                                                              'class': 'form-control',
-                                                              }))
+
     username = forms.CharField(max_length=100,
                                required=True,
                                widget=forms.TextInput(attrs={'placeholder': 'Username',
@@ -72,15 +52,25 @@ class CreateUserForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
-# - Authenticate a user (Model Form)
+        fields = ['name', 'username', 'email', 'password1', 'password2']
+
 
 class LoginForm(AuthenticationForm):
 
     username = forms.CharField(widget=TextInput())
     password = forms.CharField(widget=PasswordInput())
 
-class ProfileForm(forms.ModelForm):
+'''class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['name', 'bio', 'birth_date', 'followers', 'unreadcount']
+'''
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['name', 'bio', 'birth_date', 'location', 'picture']  # Fields to include in the form
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['location'].widget.attrs.update({'placeholder': 'Enter your location'})
+        self.fields['birth_date'].widget.attrs.update({'placeholder': 'YYYY-MM-DD'})

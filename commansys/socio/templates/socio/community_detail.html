@@ -1,0 +1,27 @@
+<!-- community_detail.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ community.name }}</title>
+</head>
+<body>
+    <h1>{{ community.name }}</h1>
+    
+    <p>Description: {{ community.description }}</p>
+    
+    <p>Location: {{ community.location }}</p>
+    
+    <!-- Add more details as needed -->
+
+    {% if user in community.followers.all %}
+        <p>You are a member of this community.</p>
+    {% else %}
+        <form action="{% url 'join_community' community_id=community.id %}" method="GET">
+            <button type="submit">Join Community</button>
+        </form>
+    {% endif %}
+</body>
+</html>

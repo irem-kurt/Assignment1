@@ -1,7 +1,9 @@
-from django.http import HttpResponse
+from datetime import timezone
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
+from django.utils import timezone
+from django.contrib import messages
 
 from .forms import CommunityForm
 
@@ -42,12 +44,45 @@ class CommunityCreateView(LoginRequiredMixin, View):
         }
         return render(request, 'socio/communitycreate.html', context)
 
-class PublicCommunityView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        communities = Community.objects.filter(is_private=False)
-        context = {
-            'community': communities
-        }
-        return render(request, 'socio/community-view.html', context)
 
-    
+class CreatedCommunitiesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        communities = Community.objects.filter(owner=request.user).order_by('-createdDate')
+        form = CommunityForm()  
+        number_of_created_communities = len(communities)
+        current_time = timezone.now()
+        context = {
+            'communities': communities,
+            'form': form,  # Pass the form to the template
+            'number_of_created_communities': number_of_created_communities,
+            'current_time': current_time,
+        }
+        return render(request, 'socio/createdcommunities.html', context)    
+
+class AllCommunitiesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        communities = Community.objects.all().order_by('-createdDate')
+        form = CommunityForm()  
+        communities_count = len(communities)
+        current_time = timezone.now()
+        context = {
+            'communities': communities,
+            'communities_count': communities_count,
+            'current_time': current_time,
+        }
+        return render(request, 'socio/allcommunities.html', context)
+
+
+class JoinCommunityView(LoginRequiredMixin, View):
+    def get(self, request, community_id, *args, **kwargs):
+        community = Community.objects.get(id=community_id)
+        
+        if community.is_private:
+            # If the community is private, send a request to join
+            messages.info(request, "You've sent a join request to the community owner.")
+            return redirect('community_detail', community_id=community.id)  # Redirect to community detail page
+        else:
+            # If the community is public, add the user to the community
+            community.followers.add(request.user)
+            messages.success(request, "You've successfully joined the community!")
+            return redirect('community_detail', community_id=community.id)  # Redirect to community detail page

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Created Communities</title>
+</head>
+<body>
+    <h1>Created Communities</h1>
+    
+    <p>Number of communities created: {{ number_of_created_communities }}</p>
+    
+    <ul>
+        {% for community in communities %}
+            <li>
+                <h3>{{ community.name }}</h3>
+                <p>Description: {{ community.description }}</p>
+                <p>Location: {{ community.location }}</p>
+                <!-- You can add more details as needed -->
+                <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 200px; max-height: 200px;">
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2><a href="{% url 'community-create' %}">Click here to create a New Community</a></h2>
+</body>
+</html>
