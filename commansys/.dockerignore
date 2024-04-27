@@ -1,0 +1,15 @@
+.git
+.gitingore
+
+.docker
+
+# Python
+app/_pycache_/
+app/*/_pycache_/
+app/*/*/_pycache_/
+app/*/*/*/_pycache_/
+.venv
+venv
+
+#local postgres data
+data/

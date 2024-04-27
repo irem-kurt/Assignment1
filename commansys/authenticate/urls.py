@@ -2,7 +2,9 @@ from django.urls import path
 
 
 from . import views
-from .views import RegisterView # Import the view here
+from .views import RegisterView 
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('profile/edit/<int:id>/', views.edit_profile, name='edit_profile'),
@@ -16,4 +18,4 @@ urlpatterns = [
     path('dashboard', views.dashboard, name="dashboard"),
 
     path('user-logout', views.user_logout, name="user-logout"),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

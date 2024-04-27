@@ -19,20 +19,3 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-'''
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    print(f"irem {created} {instance.username}")
-    if created:
-        Profile.objects.create(user=instance, name="", bio="")
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-
-    instance.profile.save()
-
-post_save.connect(create_user_profile, sender=User)
-post_save.connect(save_user_profile, sender=User)
-
-'''

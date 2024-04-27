@@ -32,7 +32,6 @@ class RegisterView(View):
         if form.is_valid():
             user = form.save()
 
-            print(f'emre {user is not None} {user.id} {user.username} {form.cleaned_data.get("name")}')
             user_profile = Profile(user=user, id=user.id, name=form.cleaned_data.get('name'))
             user_profile.save()
 
@@ -131,9 +130,7 @@ def view_profile(request, id):
     # Retrieve the UserProfile object or return a 404 error if not found
     profile = get_object_or_404(Profile, pk=id)
 
-    print(f'emre {profile.name} {profile.bio}')
-
-
+  
     # Prepare the context data to pass to the template
     context = {
         'profile': profile,
