@@ -1,17 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
-</head>
-<body>
-    <h1>Edit Profile</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <!-- Render the ImageField using a file input -->
-        <button type="submit">Save Changes</button>
-    </form>
-</body>
-</html>
+{% extends "authenticate/base.html" %}
+
+{% block body_content %}
+    {% include "authenticate/navbar.html" %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Profile</title>
+    </head>
+    <body>
+        <h1>Edit Profile</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.name.label_tag }}: {{ form.name }}
+            <br>
+            {{ form.bio.label_tag }}: {{ form.bio }}
+            <br>
+            {{ form.birth_date.label_tag }}: {{ form.birth_date }}
+            <br>
+            {{ form.location.label_tag }}: {{ form.location }}
+            <br>
+            {{ form.picture.label_tag }}: {{ form.picture }}
+            <br>
+            <input type="file" id="id_picture" name="picture" accept="image/png">
+            <br>
+            <button type="submit">Save Changes</button>
+        </form>
+    </body>
+    </html>
+{% endblock %}

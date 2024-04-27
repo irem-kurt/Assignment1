@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.1">
     <title>User Profile</title>
 </head>
 <body>
@@ -10,29 +10,28 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="id_name">Name:</label><br>
-        {{ form.name }}
+        {{ name }}
         <br><br>
         <label for="id_bio">Bio:</label><br>
-        {{ form.bio }}
+        {{ bio }}
         <br><br>
         <label for="id_birth_date">Birth Date:</label><br>
-        {{ form.birth_date }}
+        {{ birth_date }}
         <br><br>
         <!-- You can uncomment the following fields if needed -->
-        <label for="id_location">Location:</label><br> -->
-        {{ form.location }} 
-        <br><br> 
-        <label for="id_picture">Picture:</label><br> 
-        {{ form.picture }} 
-        <br><br> 
-        <label for="id_followers">Followers:</label><br>
-        {{ form.followers }}
-        <br><br>
-        <!-- <label for="id_unreadcount">Unread Count:</label><br> -->
-        <!-- {{ form.unreadcount }} -->
-        <!-- <br><br> -->
+        <label for="id_location">Location:</label><br>
+        <input type="text" id="id_location" name="location" placeholder="Enter location coordinates (e.g., latitude, longitude)" value="{{ location }}">
 
-        <button type="submit">Edit Profile</button>
+        <br><br> 
+        {% csrf_token %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-thumbnail" width="200" height="200" border="1">
+        <br><br>
+        <label for="id_followers">Followers:</label><br>
+        {{ followers }}
+        <br><br>
+        <a href="{% url 'edit_profile' id=profile.id%}">
+            <button type="submit">Todo:Edit Profile</button>
+        </a>
         
     </form>
 </body>

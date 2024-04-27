@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 
 class CreateUserForm(UserCreationForm):
     # fields we want to include and customize in our form
+    id = models.AutoField(primary_key=True)
     name = forms.CharField(max_length=100,
                                  required=True,
                                  widget=forms.TextInput(attrs={'placeholder': 'Name',

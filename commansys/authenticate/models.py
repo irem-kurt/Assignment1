@@ -6,7 +6,8 @@ from django.db.models.signals import post_save
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, primary_key=True, verbose_name='user', related_name='profile', on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, verbose_name='user', related_name='profile', on_delete=models.CASCADE)
     name = models.CharField(max_length=30, blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
     birth_date = models.DateTimeField(null=True, blank=True)
@@ -18,7 +19,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-
+'''
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     print(f"irem {created} {instance.username}")
@@ -33,3 +34,5 @@ def save_user_profile(sender, instance, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)
+
+'''

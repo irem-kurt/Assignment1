@@ -86,3 +86,6 @@ class JoinCommunityView(LoginRequiredMixin, View):
             community.followers.add(request.user)
             messages.success(request, "You've successfully joined the community!")
             return redirect('community_detail', community_id=community.id)  # Redirect to community detail page
+
+def home(request):
+    return render(request, 'socio/home.html')

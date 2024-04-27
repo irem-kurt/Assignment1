@@ -3,6 +3,7 @@ from .models import Profile
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render, redirect
+from django.contrib.auth import login
 
 from . forms import CreateUserForm, LoginForm, ProfileForm
 
@@ -16,33 +17,29 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate
 from django.views import View
-
-def home(request):
-
-    return render(request, 'authenticate/index.html')
+from .views import login
 
 class RegisterView(View):
-    form_class = CreateUserForm
-    initial = {'key': 'value'}
     template_name = 'authenticate/registerpage.html'
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
+        form = CreateUserForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = CreateUserForm(request.POST, request.FILES)
 
         if form.is_valid():
             user = form.save()
 
-            '''user_profile = Profile(user=user, id=user.id)
-            user_profile.save()'''
+            print(f'emre {user is not None} {user.id} {user.username} {form.cleaned_data.get("name")}')
+            user_profile = Profile(user=user, id=user.id, name=form.cleaned_data.get('name'))
+            user_profile.save()
 
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}')
-            #to do: goes to feed
-            return redirect(to='/authenticate/home')
+            if user is not None:
+                return redirect('my-login')
 
         return render(request, self.template_name, {'form': form})
 
@@ -133,6 +130,9 @@ def create_user_and_profile(request):
 def view_profile(request, id):
     # Retrieve the UserProfile object or return a 404 error if not found
     profile = get_object_or_404(Profile, pk=id)
+
+    print(f'emre {profile.name} {profile.bio}')
+
 
     # Prepare the context data to pass to the template
     context = {
