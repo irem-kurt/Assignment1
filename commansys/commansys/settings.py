@@ -28,8 +28,7 @@ SECRET_KEY = 'django-insecure-xudd*ez8i-fj529qdbt-$7u594-b^18sh!8rmqv(+0vc%)*wzh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
-
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
 # Application definition
 
@@ -55,6 +54,7 @@ LOCATION_FIELD = {
     'provider.google.api_libraries': '',
     'provider.google.map.type': 'ROADMAP',
 }
+
 
 
 MIDDLEWARE = [

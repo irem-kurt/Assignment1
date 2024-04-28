@@ -5,6 +5,8 @@ from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.urls import reverse
+
 
 from . forms import CreateUserForm, LoginForm, ProfileForm
 
@@ -72,11 +74,8 @@ def my_login(request):
 
 
 def user_logout(request):
-
     auth.logout(request)
-
-    return redirect("/authenticate/")
-
+    return redirect(reverse('home'))
 
 
 @login_required(login_url="my-login")

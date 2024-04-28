@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Community
+from .models import Community, Post, Comment
 
 class CommunityForm(forms.ModelForm):
     name = forms.CharField(
@@ -40,3 +40,22 @@ class CommunityForm(forms.ModelForm):
         fields = ['name', 'description', 'picture', 'location', 'is_private']
         
         
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'image', 'content', 'link']
+
+    def __init__(self, *args, **kwargs):
+        super(PostForm, self).__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        self.fields['image'].widget.attrs.update({'class': 'form-control-file'})
+        self.fields['content'].widget.attrs.update({'class': 'form-control', 'rows': '4'})
+        self.fields['link'].widget.attrs.update({'class': 'form-control'})
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+          'text': forms.Textarea(attrs={'rows':2}),
+        }

@@ -1,7 +1,5 @@
 {% extends "authenticate/base.html" %}
 {% block body_content %}
-    {% include "authenticate/navbar.html" %}
-
     {% if not user.is_authenticated %}
     <div class="col-md-10 col-sm-12 text-center">
         <h1 class="display-2">Connect With Socio!</h1>
@@ -13,4 +11,27 @@
     </div>
     {% endif %}
 
+    <!-- Section to display all communities -->
+    <div class="container mt-5">
+        <div class="d-flex justify-content-end mb-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'community-create' %}" class="btn btn-primary">Create Community</a>
+            {% endif %}
+        </div>
+        <h2>All Communities</h2>
+        <div class="row">
+            {% for community in communities %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ community.picture.url }}" class="card-img-top" alt="{{ community.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ community.name }}</h5>
+                        <p class="card-text">{{ community.description }}</p>
+                        <a href="{% url 'community_detail' community.id %}" class="btn btn-primary">View Community</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

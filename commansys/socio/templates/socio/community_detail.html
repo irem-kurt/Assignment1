@@ -1,27 +1,32 @@
-<!-- community_detail.html -->
+{% extends "authenticate/base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ community.name }}</title>
-</head>
-<body>
-    <h1>{{ community.name }}</h1>
-    
-    <p>Description: {{ community.description }}</p>
-    
-    <p>Location: {{ community.location }}</p>
-    
-    <!-- Add more details as needed -->
+{% block body_content %}
+<!-- Community Details -->
+<div class="container">
+    <div class="community-details">
+        <h1>{{ community.name }}</h1>
+        <!-- Display image -->
+        <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 100%; height: auto;">
 
-    {% if user in community.followers.all %}
-        <p>You are a member of this community.</p>
-    {% else %}
-        <form action="{% url 'join_community' community_id=community.id %}" method="GET">
-            <button type="submit">Join Community</button>
-        </form>
-    {% endif %}
-</body>
-</html>
+        <p>Description: {{ community.description }}</p>
+        <!-- Display location -->
+        <p>Location: {{ community.location }}</p>
+
+        <!-- Button to join community -->
+        {% if user.is_authenticated %}
+            {% if not user.profile.communities.filter(pk=community.pk).exists %}
+                <form method="post" action="{% url 'join_community' community.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Join Community</button>
+                </form>
+            {% else %}
+                <p>You are already a member of this community.</p>
+            {% endif %}
+        {% else %}
+            <p><a href="{% url 'my-login' %}">Login</a> or <a href="{% url 'registerpage' %}">Register</a> to join this community.</p>
+        {% endif %}
+        
+        <!-- Add more details as needed -->
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,17 @@
 from datetime import timezone
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.utils import timezone
 from django.contrib import messages
 
-from .forms import CommunityForm
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Community, Post
+from .forms import CommentForm, CommunityForm, PostForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -88,4 +94,58 @@ class JoinCommunityView(LoginRequiredMixin, View):
             return redirect('community_detail', community_id=community.id)  # Redirect to community detail page
 
 def home(request):
-    return render(request, 'socio/home.html')
+    # Fetch all communities
+    communities = Community.objects.all().order_by('-createdDate')
+    
+    # Pass the communities to the template
+    return render(request, 'socio/home.html', {'communities': communities})
+
+
+@login_required
+def create_post(request, community_id):
+    community = Community.objects.get(id=community_id)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            community.posts.add(post)
+            messages.success(request, 'Post creation successful.')
+            return redirect('community_detail', community_id=community.id)
+    else:
+        form = PostForm()
+    return render(request, 'socio/create_post.html', {'form': form})
+
+@login_required
+def community_detail(request, community_id):
+    community = Community.objects.get(id=community_id)
+    posts = community.posts.all().order_by('-created_at')
+    return render(request, 'socio/community_detail.html', {'community': community, 'posts': posts})
+
+@login_required
+def like_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user in post.likers.all():
+        post.likers.remove(request.user)
+    else:
+        post.likers.add(request.user)
+        post.dislikers.remove(request.user)  # Remove from dislikers if user likes the post
+    return redirect('post_detail', post_id=post_id)
+
+@login_required
+def dislike_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user in post.dislikers.all():
+        post.dislikers.remove(request.user)
+    else:
+        post.dislikers.add(request.user)
+        post.likers.remove(request.user)  # Remove from likers if user dislikes the post
+    return redirect('post_detail', post_id=post_id)
+
+
+def community_detail(request, community_id):
+    community = get_object_or_404(Community, id=community_id)
+    # Assuming you have a template named 'community_detail.html' to render the community details
+    return render(request, 'socio/community_detail.html', {'community': community})
+
