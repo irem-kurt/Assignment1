@@ -1,4 +1,5 @@
 
+from django.http import HttpResponseRedirect
 from .models import Profile
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render
@@ -104,6 +105,22 @@ def user_profile(request, id):
     # Render the user profile template with the context data
     return render(request, 'authenticate/user-profile.html', context)
 
+@login_required(login_url="my-login")
+def follow_user(request, id):
+    user_to_follow = get_object_or_404(Profile, pk=id)
+    target_profile = user_to_follow.profile
+
+    user_profile = request.user.profile
+    print(user_profile)
+    if target_profile.followers.contains(user_profile):
+        target_profile.followers.remove(user_profile)
+    else:
+        target_profile.followers.add(user_profile)
+    target_profile.save()
+    print("Successfully added to followers")
+
+
+    return HttpResponseRedirect('/user/' + str(user_to_follow.pk))
 
 
 '''

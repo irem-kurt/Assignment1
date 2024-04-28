@@ -1,15 +1,18 @@
+# Git
 .git
-.gitingore
+.gitignore
 
+# Docker
 .docker
 
 # Python
-app/_pycache_/
-app/*/_pycache_/
-app/*/*/_pycache_/
-app/*/*/*/_pycache_/
-.venv
-venv
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+.env/
+.venv/
+venv/
 
-#local postgres data
+# Local PostgreSQL data
 data/

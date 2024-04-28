@@ -7,8 +7,6 @@ media/
 static/
 
 # Docker
-docker-compose.yml
-Dockerfile
 .env
 
 # PostgreSQL
