@@ -33,16 +33,15 @@
     
     <p>Number of communities: {{ communities_count }}</p>
     
-    <ul>
+    <div class="container">
         {% for community in communities %}
-            <li>
+            <div class="community-card">
                 <h3>{{ community.name }}</h3>
-
-
                 <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 200px; max-height: 200px;">
                 <p>Description: {{ community.description }}</p>
-            </li>
+                <a href="{% url 'community_detail' community.id %}" class="btn btn-primary">View Community</a>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 </body>
 </html>

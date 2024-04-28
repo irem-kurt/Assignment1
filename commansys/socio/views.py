@@ -84,20 +84,19 @@ class JoinCommunityView(LoginRequiredMixin, View):
         community = Community.objects.get(id=community_id)
         
         if community.is_private:
-            # If the community is private, send a request to join
+
             messages.info(request, "You've sent a join request to the community owner.")
-            return redirect('community_detail', community_id=community.id)  # Redirect to community detail page
+            return redirect('community_detail', community_id=community.id)  
         else:
-            # If the community is public, add the user to the community
+
             community.followers.add(request.user)
             messages.success(request, "You've successfully joined the community!")
-            return redirect('community_detail', community_id=community.id)  # Redirect to community detail page
+            return redirect('community_detail', community_id=community.id) 
 
 def home(request):
-    # Fetch all communities
+
     communities = Community.objects.all().order_by('-createdDate')
-    
-    # Pass the communities to the template
+
     return render(request, 'socio/home.html', {'communities': communities})
 
 
@@ -130,7 +129,7 @@ def like_post(request, post_id):
         post.likers.remove(request.user)
     else:
         post.likers.add(request.user)
-        post.dislikers.remove(request.user)  # Remove from dislikers if user likes the post
+        post.dislikers.remove(request.user) 
     return redirect('post_detail', post_id=post_id)
 
 @login_required
@@ -140,12 +139,11 @@ def dislike_post(request, post_id):
         post.dislikers.remove(request.user)
     else:
         post.dislikers.add(request.user)
-        post.likers.remove(request.user)  # Remove from likers if user dislikes the post
+        post.likers.remove(request.user)  
     return redirect('post_detail', post_id=post_id)
 
 
 def community_detail(request, community_id):
     community = get_object_or_404(Community, id=community_id)
-    # Assuming you have a template named 'community_detail.html' to render the community details
     return render(request, 'socio/community_detail.html', {'community': community})
 

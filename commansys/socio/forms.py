@@ -43,14 +43,14 @@ class CommunityForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'image', 'content', 'link']
+        fields = ['title', 'image', 'content']
 
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['image'].widget.attrs.update({'class': 'form-control-file'})
         self.fields['content'].widget.attrs.update({'class': 'form-control', 'rows': '4'})
-        self.fields['link'].widget.attrs.update({'class': 'form-control'})
+
 
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -2,14 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from location_field.models.plain import PlainLocationField
-
 from django.urls import reverse
-
 from django.utils.text import slugify
-
 from authenticate.models import Profile
-
-
 
 class Community(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE) #old creator
@@ -29,16 +24,6 @@ class Community(models.Model):
     class Meta:
         app_label = 'socio' 
 
-
-
-class NotifyUser(models.Model):
-    notify = models.ForeignKey(User, verbose_name='user', related_name='notify', on_delete=models.CASCADE)
-    notification = models.TextField(blank=True, null=True)
-    hasRead = models.BooleanField(default=False)
-    offerType = models.TextField(blank=True, null=True)
-    offerPk = models.IntegerField(default=0)
-
-# models.py
 
 class Post(models.Model):
     title = models.CharField(max_length=50)
@@ -67,25 +52,3 @@ class Comment(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     text = models.TextField()
 
-
-'''class PostTemplate(models.Model):
-    name = models.CharField(max_length=255)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='templates')
-    settings = models.JSONField()  # Assuming settings will be stored as JSON
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_date = models.DateTimeField(auto_now_add=True)
-
-class Post(models.Model):
-    created_date = models.DateTimeField(auto_now_add=True)
-    input = models.JSONField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts')
-    likes = models.PositiveIntegerField(default=0)
-    dislikes = models.PositiveIntegerField(default=0)
-    template = models.ForeignKey(PostTemplate, on_delete=models.CASCADE)
-
-class Comment(models.Model):
-    created_date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-'''

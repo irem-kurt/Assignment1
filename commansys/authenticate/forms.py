@@ -1,25 +1,14 @@
-
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-
 from django import forms
-
-
 from django.forms.widgets import PasswordInput, TextInput
-
 from .models import Profile, models
-
-
-# - Create/Register a user (Model Form)
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-
-
 class CreateUserForm(UserCreationForm):
-    # fields we want to include and customize in our form
+
     id = models.AutoField(primary_key=True)
     name = forms.CharField(max_length=100,
                                  required=True,
@@ -69,7 +58,7 @@ class LoginForm(AuthenticationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['name', 'bio', 'birth_date', 'location', 'picture']  # Fields to include in the form
+        fields = ['name', 'bio', 'birth_date', 'location', 'picture'] 
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
