@@ -19,7 +19,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from .models import Community, NotifyUser
+from .models import Community
 from .forms import CommunityForm
 
 from django.shortcuts import redirect
