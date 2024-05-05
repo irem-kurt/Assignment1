@@ -1,0 +1,29 @@
+{% extends "authenticate/base.html" %}
+{% block body_content %}
+    <h1>{{ community.name }} | {{ template.name }}</h1>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in template.fields.all %}
+            {% if field.name %}
+                <label for="{{ field.name }}">{{ field.name }}</label><br>
+            {% endif %}
+            {% if field.post_type == 'text' %}
+                <textarea name="{{ field.name }}" rows="3"></textarea><br>
+            {% elif field.post_type == 'image' %}
+                <input type="file" name="{{ field.name }}"><br>
+            {% elif field.post_type == 'video' %}
+                <input type="file" name="{{ field.name }}"><br>
+            {% elif field.post_type == 'audio' %}
+                <input type="file" name="{{ field.name }}"><br>
+            {% elif field.post_type == 'location' %}
+                <input type="text" name="{{ field.name }}" rows="3"><br>
+            {% elif field.post_type == 'datetime' %}
+                <input type="datetime-local" name="{{ field.name }}"><br>
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Create Post</button>
+    </form>
+{% endblock %}

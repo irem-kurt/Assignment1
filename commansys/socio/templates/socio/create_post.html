@@ -7,7 +7,17 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Create Post</button>
         </form>
+        <h2 style="margin-top: 20px;">Use Custom Templates</h2>
+        <ul>
+            {% for template in post_templates %}
+                <li>
+                    <a href="{% url 'create_custom_post' community_id=community_id template_id=template.id %}">
+                        Go to {{ template.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

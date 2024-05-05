@@ -1,0 +1,78 @@
+{% extends "authenticate/base.html" %}
+{% block body_content %}
+    <h2>Create Template</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="template_name">Template Name:</label>
+            <input type="text" id="template_name" name="template_name" required>
+        </div>
+        <h3>Template Items:</h3>
+        <table id="post-items-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Optional</th>
+                </tr>
+            </thead>
+            <tbody id="item-table-body">
+                <!-- Template items will be dynamically added here -->
+            </tbody>
+        </table>
+        <div id="item-row">
+            <!-- Row for adding new item -->
+            <input type="text" id="item-name" placeholder="Name">
+            <select id="item-type">
+                <option value="text">Text</option>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+                <option value="date">Date</option>
+                <option value="location">Location</option>
+            </select>
+            <input type="checkbox" id="optional">
+            <label for="optional">Optional</label>
+            <button type="button" id="add-item">Add Item</button>
+        </div>
+        <button type="submit">Create Template</button>
+    </form>
+    <script>
+        document.getElementById('add-item').addEventListener('click', function() {
+            const itemName = document.getElementById('item-name').value;
+            const itemType = document.getElementById('item-type').value;
+            const optional = document.getElementById('optional').checked;
+            const tableBody = document.getElementById('item-table-body');
+            const newRow = tableBody.insertRow();
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            cell1.textContent = itemName;
+            cell2.textContent = itemType;
+            cell3.textContent = optional ? 'Yes' : 'No';
+
+            // Create hidden inputs to pass data to the server
+            const hiddenNameInput = document.createElement('input');
+            hiddenNameInput.type = 'hidden';
+            hiddenNameInput.name = 'post_items';
+            hiddenNameInput.value = itemName;
+            tableBody.appendChild(hiddenNameInput);
+
+            const hiddenTypeInput = document.createElement('input');
+            hiddenTypeInput.type = 'hidden';
+            hiddenTypeInput.name = 'post_items';
+            hiddenTypeInput.value = itemType;
+            tableBody.appendChild(hiddenTypeInput);
+
+            const hiddenOptionalInput = document.createElement('input');
+            hiddenOptionalInput.type = 'hidden';
+            hiddenOptionalInput.name = 'post_items';
+            hiddenOptionalInput.value = optional ? 'true' : 'false';
+            tableBody.appendChild(hiddenOptionalInput);
+
+            // Clear input fields
+            document.getElementById('item-name').value = '';
+            document.getElementById('optional').checked = false;
+        });
+    </script>
+{% endblock %}

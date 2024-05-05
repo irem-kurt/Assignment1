@@ -1,4 +1,5 @@
 {% extends "authenticate/base.html" %}
+{% load static %}
 
 {% block body_content %}
     <!-- Community Details -->
@@ -11,25 +12,102 @@
             <!-- Display location -->
             <p>Location: {{ community.location }}</p>
 
-            <!-- Button to create a new post -->
-            <a href="{% url 'create_post' community_id=community.id %}" class="btn btn-primary">Create New Post</a>
+            {% if is_member %}
+                <!-- Button to create a new post -->
+                <a href="{% url 'create_post' community_id=community.id %}" class="btn btn-primary">Create New Post</a>
+            {% endif %}
+            
+            {% if is_admin %}
+                <!-- Button to create a new template -->
+                <a href="{% url 'create_template' community_id=community.id %}" class="btn btn-primary">Create New Post Template</a>
+            {% endif %}
+
+            {% if is_member %}
+                <!-- Button to quit -->
+                <a href="{% url 'create_template' community_id=community.id %}" class="btn btn-primary">Quit Community</a>
+            {% elif community.is_private %}
+                {% if user in community.invites %}
+                <p>Pending Approval to Join ⏳</p>
+                {% else %}
+                <!-- Button to send request -->
+                <a href="{% url 'create_template' community_id=community.id %}" class="btn btn-primary">Send Request to Join Community</a>
+                {% endif %}
+            {% else %}
+                <!-- Button to join -->
+                <a href="{% url 'create_template' community_id=community.id %}" class="btn btn-primary">👉 Join Community</a>
+            {% endif %}
+
         </div>
     </div>
-    <!-- Display posts -->
-    <div class="container">
-        <h2>Posts</h2>
-        {% if community.posts.all %}
-            {% for post in community.posts.all %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ post.title }}</h5>
-                        <p class="card-text">{{ post.content }}</p>
-                        <!-- Add more details about the post as needed -->
+    {% if is_member or not community.is_private%}
+        <!-- Display posts -->
+        <div class="container">
+            <h2>Posts</h2>
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content }}</p>
+
+                            <!-- Content based on post fields -->
+                            {% for field in post.fields.all %}
+                                {% if field.name %}
+                                    <label>{{ field.name }}</label><br>
+                                {% endif %}
+                                <div> <!-- Wrap content in a div -->
+                                    {% if field.post_type == 'text' %}
+                                        <p>{{ field.text }}</p>
+                                    {% elif field.post_type == 'image' %}
+                                        <img src="{{ field.image.url }}" alt="Image">
+                                    {% elif field.post_type == 'video' %}
+                                        <video controls>
+                                            <source src="{{ field.video.url }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    {% elif field.post_type == 'audio' %}
+                                        <audio controls>
+                                            <source src="{{ field.audio.url }}" type="audio/mp3">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    {% elif field.post_type == 'location' %}
+                                        <p>{{ field.location }}</p>
+                                    {% elif field.post_type == 'datetime' %}
+                                        <p>{{ field.date }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <!-- Like button and count -->
+                            <button type="button" class="btn btn-primary like-btn" data-post-id="{{ post.id }}">Like</button>
+                            <p style="display: inline; margin-left: 5px;" class="like-count">{{ post.likes.count }}</p>
+                            <!-- Dislike button and count -->
+                            <button type="button" class="btn btn-primary dislike-btn" data-post-id="{{ post.id }}">Dislike</button>
+                            <p style="display: inline; margin-left: 5px;" class="dislike-count">{{ post.dislikes.count }}</p>
+
+                            <!-- Comments section -->
+                            <h6>Comments</h6>
+                            <ul>
+                                {% for comment in post.comments.all %}
+                                    <li>{{ comment.text }}</li>
+                                {% endfor %}
+                            </ul>
+                            <!-- Form to submit new comments -->
+                            <form>
+                                <!-- Add text input for comment -->
+                                <input type="text" id="comment-text-{{ post.id }}" placeholder="Enter your comment">
+                                <!-- Add comment button with post ID data attribute -->
+                                <button type="button" class="btn btn-primary submit-comment-btn" data-post-id="{{ post.id }}">Add Comment</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No posts available</p>
-        {% endif %}
-    </div>
+                {% endfor %}
+            {% else %}
+
+                <p>No posts available</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'community_detail.js' %}"></script>
 {% endblock %}

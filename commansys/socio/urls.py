@@ -9,9 +9,11 @@ urlpatterns = [
     path('join-community/<int:community_id>/', views.JoinCommunityView.as_view(), name='join_community'),
     path('post/<int:post_id>/like/', views.like_post, name='like_post'),
     path('post/<int:post_id>/dislike/', views.dislike_post, name='dislike_post'),
+    path('post/like_dislike/', views.like_dislike_post, name='like_dislike_post'),
+    path('post/add_comment/', views.add_comment, name='add_comment'),
     path('community/<int:community_id>/create_post/', views.create_post, name='create_post'),
+    path('community/<int:community_id>/create_custom_post/<int:template_id>', views.create_custom_post, name='create_custom_post'),
+    path('community/<int:community_id>/create_template/', views.create_template, name='create_template'),
+    #path('community/<int:community_id>/requests/', views.display_requests, name='display_requests'),
     path('community/<int:community_id>/', views.community_detail, name='community_detail'),
-
-
-
 ]

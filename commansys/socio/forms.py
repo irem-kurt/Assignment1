@@ -1,6 +1,6 @@
 from django import forms
+from .models import Community, Comment, PostTemplateItem, PostTemplateItemType
 
-from .models import Community, Post, Comment
 
 class CommunityForm(forms.ModelForm):
     name = forms.CharField(
@@ -22,6 +22,13 @@ class CommunityForm(forms.ModelForm):
         })
     )
 
+    rules = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': '5',
+            'placeholder': 'Set the rules of the community here'
+        })
+    )
+
     location = forms.CharField(
         widget=forms.TextInput(attrs={
             'placeholder': 'Location...'
@@ -37,19 +44,7 @@ class CommunityForm(forms.ModelForm):
 
     class Meta:
         model = Community
-        fields = ['name', 'description', 'picture', 'location', 'is_private']
-        
-        
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'image', 'content']
-
-    def __init__(self, *args, **kwargs):
-        super(PostForm, self).__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['image'].widget.attrs.update({'class': 'form-control-file'})
-        self.fields['content'].widget.attrs.update({'class': 'form-control', 'rows': '4'})
+        fields = ['name', 'description', 'rules', 'picture', 'location', 'is_private']
 
 
 class CommentForm(forms.ModelForm):
@@ -59,3 +54,18 @@ class CommentForm(forms.ModelForm):
         widgets = {
           'text': forms.Textarea(attrs={'rows':2}),
         }
+        
+        
+class PostTemplateItemForm(forms.ModelForm):
+    class Meta:
+        model = PostTemplateItem
+        fields = ['name', 'post_type', 'mandatory']
+
+    def __init__(self, *args, **kwargs):
+        super(PostTemplateItemForm, self).__init__(*args, **kwargs)
+        self.fields['post_type'].widget = forms.Select(choices=PostTemplateItemType.choices())
+        
+        
+class DefaultPostForm(forms.Form):
+    title = forms.CharField(label='Title *', max_length=100)
+    description = forms.CharField(label='Description (optional)', widget=forms.Textarea(attrs={'rows': 5}), required=False)
