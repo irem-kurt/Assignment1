@@ -17,20 +17,34 @@
                 <a href="{% url 'community-create' %}" class="btn btn-primary">Create Community</a>
             {% endif %}
         </div>
-        <h2>All Communities</h2>
+        {% if search_term %}
+            <h2>Search Results for "{{ search_term }} ..."</h2>
+        {% else %}
+            <h2>All Communities</h2>
+        {% endif %}
         <div class="row">
-            {% for community in communities %}
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="{{ community.picture.url }}" class="card-img-top" alt="{{ community.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ community.name }}</h5>
-                        <p class="card-text">{{ community.description }}</p>
-                        <a href="{% url 'community_detail' community.id %}" class="btn btn-primary">View Community</a>
+            {% if communities %}
+                {% for community in communities %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ community.picture.url }}" class="card-img-top" alt="{{ community.name }}">
+                        <div class="card-body">
+
+                            {% if community.is_private %}
+                                <span>🔒</span> <!-- Emoji for lock -->
+                            {% endif %}
+                            {{ community.name }}
+                            <p class="card-text">{{ community.description }}</p>
+                            <a href="{% url 'community_detail' community.id %}" class="btn btn-primary">View Community</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12">
+                    <p>No communities found.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

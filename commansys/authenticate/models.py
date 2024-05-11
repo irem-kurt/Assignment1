@@ -11,7 +11,7 @@ class Profile(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
     birth_date = models.DateTimeField(null=True, blank=True)
-    location = PlainLocationField(default='41.0255493,28.9742571', zoom=7, blank=False, null=False)
+    location = PlainLocationField(default='41.012791, 28.964593', zoom=7, blank=False, null=False)
     picture = models.ImageField(upload_to='uploads/profile_pictures/', default='uploads/profile_pictures/default.png')
     followers = models.ManyToManyField(User, blank=True, related_name='followers', symmetrical=False)
     unreadcount = models.IntegerField(default=0)

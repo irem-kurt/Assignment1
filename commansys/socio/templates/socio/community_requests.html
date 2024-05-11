@@ -1,0 +1,52 @@
+{% extends "authenticate/base.html" %}
+{% load static %}
+
+{% block body_content %}
+    <!-- Community Details -->
+    <div class="container">
+        <div class="community-details">
+            <h1>{{ community.name }}</h1>
+            <!-- Display image -->
+            <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 100%; height: auto;">
+            <p>Description: {{ community.description }}</p>
+            <!-- Display location -->
+            <p>Location: {{ community.location }}</p>
+            <!-- Back Button -->
+            <a href="{% url 'community_detail' community_id=community.id %}" class="btn btn-primary">&lt;-Back</a>
+        </div>
+    </div>
+    {% if is_admin %}
+        <!-- Display requests -->
+        <div class="container">
+            <h2>Join Requests</h2>
+            {% if requests %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in requests %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>
+                                    <button class="btn btn-success accept-request" data-user-id="{{ user.id }}">Accept</button>
+                                    <button class="btn btn-danger reject-request" data-user-id="{{ user.id }}">Reject</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No requests available</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    <script>
+        var communityId = "{{ community.id }}";
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'community_requests.js' %}"></script>
+{% endblock %}

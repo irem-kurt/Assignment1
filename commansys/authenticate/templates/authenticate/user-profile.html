@@ -1,14 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.1">
-    <title>User Profile</title>
-</head>
-<body>
+{% extends "authenticate/base.html" %}
+{% load static %}
+
+{% block body_content %}
     <h1>User Profile</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        <br><br> 
+        {% csrf_token %}
+        
+        <img src="{{ profile.picture.url }}" alt="Profile Picture" class="rounded-circle img-thumbnail" width="200" height="200">
+        <br><br>
+
         <label for="form.id_name">Name:</label><br>
         {{ name }}
         <br><br>
@@ -21,18 +23,62 @@
 
         <label for="id_location">Location:</label><br>
         <input type="text" id="id_location" name="location" placeholder="Enter location coordinates (e.g., latitude, longitude)" value="{{ location }}">
-
-        <br><br> 
-        {% csrf_token %}
-        <img src="{% static 'profile.picture.url'}" alt="Profile Picture" class="rounded-circle img-thumbnail" width="200" height="200" border="1">
-        <br><br>
-        <label for="profile.followers">Followers:</label><br>
-        {{ followers }}
-        <br><br>
-        <a href="{% url 'edit_profile' id=profile.id%}">
-            <button type="submit">Todo:Edit Profile</button>
-        </a>
         
+        <!-- Leaflet map container -->
+        <div id="map" style="height: 200px; width: 300px; margin-top: 20px;"></div>
+
+        {% if user.profile != profile %}
+            <div>
+                {% if not following %}
+                    <!-- Follow -->
+                    <button class="btn btn-primary follow" style="margin-top: 20px;" data-user-id="{{ profile.user.id }}">Follow</button>
+                {% else %}
+                    <!-- Unfollow -->
+                    <button class="btn btn-primary mr-2 unfollow" style="background-color: rgb(138, 119, 119); margin-top: 20px;" data-user-id="{{ profile.user.id }}">Unfollow</button>
+                {% endif %}
+            </div>
+        {% endif %}
+        <label for="profile.followers">Followers:</label><br>
+        {% if followers %}
+            {% for user in followers %}
+                <div class="d-flex align-items-center">
+                    <!-- Profile Picture -->
+                    <div class="mr-3">
+                        <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'default_profile_picture.jpg' %}{% endif %}" alt="Profile Picture" class="rounded-circle" style="width: 80px; height: 80px; margin-right: 10px;">
+                    </div>
+                    <!-- User Info -->
+                    <div>
+                        <p class="mb-1 font-weight-bold">{{ user.username }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No followers yet.</p>
+        {% endif %}
+            
     </form>
-</body>
-</html>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var locationValue = "{{ profile.location }}";
+
+        // Split the location value into latitude and longitude
+        var [latitude, longitude] = locationValue.split(',');
+
+        console.log(latitude, longitude)
+        // Initialize the map
+        var map = L.map('map').setView([latitude, longitude], 13);
+
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker for the location
+        L.marker([latitude, longitude]).addTo(map)
+            .bindPopup('Location').openPopup();
+    </script>
+    <script> var user_id = "{{ profile.user.id }}"; </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'user_profile.js' %}"></script>
+{% endblock %}

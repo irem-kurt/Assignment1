@@ -1,12 +1,12 @@
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import Profile
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.urls import reverse
-
+from django.contrib.auth.models import User
 
 from . forms import CreateUserForm, LoginForm, ProfileForm
 
@@ -65,7 +65,7 @@ def my_login(request):
 
                 auth.login(request, user)
 
-                return redirect("dashboard")
+                return redirect('home')
 
 
     context = {'loginform':form}
@@ -104,24 +104,6 @@ def user_profile(request, id):
     # Render the user profile template with the context data
     return render(request, 'authenticate/user-profile.html', context)
 
-@login_required(login_url="my-login")
-def follow_user(request, id):
-    user_to_follow = get_object_or_404(Profile, pk=id)
-    target_profile = user_to_follow.profile
-
-    user_profile = request.user.profile
-    print(user_profile)
-    if target_profile.followers.contains(user_profile):
-        target_profile.followers.remove(user_profile)
-    else:
-        target_profile.followers.add(user_profile)
-    target_profile.save()
-    print("Successfully added to followers")
-
-
-    return HttpResponseRedirect('/user/' + str(user_to_follow.pk))
-
-
 '''
 from django.contrib.auth.models import User
 def create_user_and_profile(request):
@@ -146,7 +128,9 @@ def view_profile(request, id):
     # Retrieve the UserProfile object or return a 404 error if not found
     profile = get_object_or_404(Profile, pk=id)
 
-  
+    following = request.user in profile.followers.all()
+    print(f'following {following} {profile.name} ${profile.followers.all()}')
+    
     # Prepare the context data to pass to the template
     context = {
         'profile': profile,
@@ -156,6 +140,7 @@ def view_profile(request, id):
         'location': profile.location,
         'picture': profile.picture,
         'followers': profile.followers.all(),
+        'following': following,
         'unreadcount': profile.unreadcount
     }
 
@@ -169,10 +154,13 @@ def edit_profile(request, id):
 
     if request.method == 'POST':
         # Create a form instance with the POST data and the instance of the profile to edit
-        form = ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             # Save the form data to update the profile
-            form.save()
+            profile = form.save(commit=False)
+            profile.user = request.user  # Associate the profile with the current user
+            profile.save()
+            print(f'Profile updated successfully : {profile.picture} : {profile.picture.url}')
             # Redirect to the profile detail page after successful update
             return redirect('user-profile', id=id)
     else:

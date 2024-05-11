@@ -8,7 +8,7 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'all_communities' %}">Communities</a>
+              <a class="nav-link active" aria-current="page" href="{% url 'all_communities' %}">My Communities</a>
             </li>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url 'user-profile' id=request.user.profile.id %}">Profile</a>
@@ -28,10 +28,13 @@
             </li>
             {% endif %}
           </ul>
-          <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search Communities" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
+
+          <form id="community-search-form" class="d-flex" role="search" method="get" action="{% url 'home' %}">
+            {% csrf_token %}
+            <input id="community-search-input" class="form-control me-2" type="search" name="search" placeholder="Search Communities" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
+
       </div>
   </div>
 </nav>

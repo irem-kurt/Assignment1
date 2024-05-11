@@ -49,19 +49,27 @@ class PostTemplateItem(models.Model):
     audio = models.FileField(upload_to='uploads/post_audio/', null=True, blank=True)
     date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=150, null=True, blank=True)
+    
+    class Meta:
+        app_label = 'socio' 
 
 class PostTemplate(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     fields = models.ManyToManyField(PostTemplateItem, related_name='post_templates') #Hangi form itemleri olduğunu tutuyor gerçek değerleri yok
     community = models.ForeignKey(Community, on_delete=models.CASCADE, null=False)
     
+    class Meta:
+        app_label = 'socio' 
     
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     text = models.TextField()
     reported = models.BooleanField(default=False)
     
-    
+    class Meta:
+        app_label = 'socio' 
+        
+        
 class Post(models.Model):
     template = models.ForeignKey(PostTemplate, on_delete=models.CASCADE, null=True, blank=True)
     fields = models.ManyToManyField(PostTemplateItem, related_name='posts') #Hangi form itemleri olduğunu gerçek değerleriyle tutuyor
@@ -75,6 +83,9 @@ class Post(models.Model):
     communit_id = models.ForeignKey(Community, on_delete=models.CASCADE, null=True)
     reported = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
+    
+    class Meta:
+        app_label = 'socio' 
 
     def get_absolute_url(self):
         return reverse("postDetailUrl", args=[self.slug])
@@ -86,6 +97,7 @@ class Post(models.Model):
         alphabet = string.ascii_letters + string.digits
         self.slug = slugify(''.join(secrets.choice(alphabet) for i in range(16)))
         super().save(*args, **kwargs)
+    
         
 class Notification(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
@@ -93,8 +105,8 @@ class Notification(models.Model):
     invite = models.BooleanField(default=False)
     read = models.BooleanField(default=False)
     
-
-
+    class Meta:
+        app_label = 'socio' 
     '''
     PostTempalteInstance
     name = 'Karşılaştırma Postu'
