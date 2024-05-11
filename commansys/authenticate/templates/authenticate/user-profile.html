@@ -14,12 +14,15 @@
         <label for="form.id_name">Name:</label><br>
         {{ name }}
         <br><br>
-        <label for="id_bio">Bio:</label><br>
-        {{ bio }}
+        <div class="bio-box" style="width: 400px; border: 1px solid #ccc; padding: 10px;">
+            <label for="id_bio">Bio:</label><br>
+            {{ bio }}
+        </div>
         <br><br>
-        <label for="id_birth_date">Birth Date:</label><br>
-        {{ birth_date }}
-        <br><br>
+        <div class="birth-date-box" style="width: 400px; border: 1px solid #ccc; padding: 10px;">
+            <label for="id_birth_date">Birth Date:</label><br>
+            {{ birth_date }}
+        </div>
 
         <label for="id_location">Location:</label><br>
         <input type="text" id="id_location" name="location" placeholder="Enter location coordinates (e.g., latitude, longitude)" value="{{ location }}">

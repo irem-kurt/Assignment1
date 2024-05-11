@@ -2,26 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Created Communities</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.0">
+    <title>Community List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #bbebea;
+            padding-top: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .community-card {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
+    {% include "authenticate/navbar.html" %}
+
     <h1>My Created Communities</h1>
     
-    <p>Number of communities created: {{ number_of_created_communities }}</p>
-    
+
     <ul>
         {% for community in communities %}
             <li>
                 <h3>{{ community.name }}</h3>
                 <p>Description: {{ community.description }}</p>
-                <p>Location: {{ community.location }}</p>
-                <!-- You can add more details as needed -->
                 <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 200px; max-height: 200px;">
             </li>
         {% endfor %}
     </ul>
 
-    <h2><a href="{% url 'community-create' %}">Click here to create a New Community</a></h2>
+    <h2><a href="{% url 'community-create' %}"class="btn btn-primary">Click here to create a New Community</a></h2>
 </body>
 </html>
