@@ -11,7 +11,9 @@ from .forms import CommunityForm, DefaultPostForm, PostTemplateItemForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
-
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 
 class CommunityCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -281,9 +283,7 @@ def post_detail(request, slug):
     # You can add additional context data here if needed
     return render(request, 'socio/post_detail.html', {'post': post})
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+
 
 @login_required
 def like_post(request, post_id):
