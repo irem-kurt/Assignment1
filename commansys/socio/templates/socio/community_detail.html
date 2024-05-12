@@ -80,6 +80,7 @@
             {% for post in posts %}
                 <div class="card">
                     <div class="card-body">
+                        <p class="card-text">{{ post.author.username }}👤 </p>
                         <h5 class="card-title">{{ post.title }}</h5>
                         <p class="card-text">{{ post.content }}</p>
 
@@ -124,7 +125,7 @@
                         <h6>Comments</h6>
                         <ul>
                             {% for comment in post.comments.all %}
-                                <li>{{ comment.text }}</li>
+                                <li>{{ comment.author.username }}: {{ comment.text }}</li>
                             {% endfor %}
                         </ul>
                         <!-- Form to submit new comments -->
