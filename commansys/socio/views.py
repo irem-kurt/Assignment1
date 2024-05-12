@@ -30,7 +30,7 @@ class CommunityCreateView(LoginRequiredMixin, View):
             new_community.owner = request.user
             new_community.save()
 
-            messages.success(request, 'Community creation is successful.')
+            messages.success(request, 'Community creation is successful. Click My Communities to see your community.')
         context = {
             'community_list': communities,
             'form': form,
