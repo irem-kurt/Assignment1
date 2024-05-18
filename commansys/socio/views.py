@@ -177,6 +177,8 @@ def create_custom_post(request, community_id, template_id):
                 
                 post.fields.add(item)
             elif field.mandatory:
+                print(f'Mandatory field {field.name} is missing {field.mandatory}')
+                post.delete()
                 # If a mandatory field is missing, display an error message
                 error_message = f"Please fill in the '{field.name}' field."
                 return render(request, 'socio/create_custom_post.html', {'community': community, 'template': template, 'error_message': error_message})
@@ -215,8 +217,7 @@ def create_template(request, community_id):
             x = 3*i
             name = post_items[x]
             post_type = post_items[x + 1]
-            mandatory = post_items[x + 2] == 'false' if False else True
-            print(f'{i}' + " " + name + " " + post_type + " " + str(mandatory))
+            mandatory = str(post_items[x + 2]) == "false"
             item = PostTemplateItem.objects.create(name=name, post_type=post_type, mandatory=mandatory)
             all_items.append(item)
         

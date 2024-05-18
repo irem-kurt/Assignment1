@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name="home"),
+    path('', views.home, name="home"), # This is the home page
     path('community-create/', views.CommunityCreateView.as_view(), name='community-create'),
     path('created-communities/', views.CreatedCommunitiesView.as_view(), name='created_communities'),
     path('all-communities/', views.AllCommunitiesView.as_view(), name='all_communities'),
