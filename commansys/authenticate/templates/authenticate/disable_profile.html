@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Disable Profile</h2>
+  <p>Are you sure you want to disable this profile?</p>
+  <button id="disable-profile-btn">Disable Profile</button>
+  <p id="disable-result"></p>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#disable-profile-btn').click(function() {
+      // Get the profile ID from the URL
+      var profileId = "{{ profile.id }}";
+
+      // Send a POST request to disable the profile
+      $.ajax({
+        type: 'POST',
+        url: `/disable_profile/${profileId}/`,
+        success: function(response) {
+          if (response.success) {
+            $('#disable-result').text('Profile disabled successfully.');
+          } else {
+            $('#disable-result').text('Failed to disable profile: ' + response.message);
+          }
+        },
+        error: function(xhr, status, error) {
+          $('#disable-result').text('Error: ' + error);
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#disable-profile-btn').click(function() {
+      // Get the profile ID from the URL
+      var profileId = "{{ profile.id }}";
+
+      // Send a POST request to disable the profile
+      $.ajax({
+        type: 'POST',
+        url: `/disable_profile/${profileId}/`,
+        success: function(response) {
+          if (response.success) {
+            $('#disable-result').text('Profile disabled successfully.');
+          } else {
+            $('#disable-result').text('Failed to disable profile: ' + response.message);
+          }
+        },
+        error: function(xhr, status, error) {
+          $('#disable-result').text('Error: ' + error);
+        }
+      });
+    });
+  });
+</script>

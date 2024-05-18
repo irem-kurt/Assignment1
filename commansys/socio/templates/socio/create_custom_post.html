@@ -19,7 +19,7 @@
             {% elif field.post_type == 'audio' %}
                 <input type="file" name="{{ field.name }}"><br>
             {% elif field.post_type == 'location' %}
-                <input type="text" name="{{ field.name }}" rows="3"><br>
+                <input type="location" name="{{ field.name }}" rows="3"><br>
             {% elif field.post_type == 'datetime' %}
                 <input type="datetime-local" name="{{ field.name }}"><br>
             {% endif %}

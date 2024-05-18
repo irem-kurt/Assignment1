@@ -27,6 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -96,11 +97,18 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'postgres'),
         'USER': os.environ.get('DB_USER', 'postgres'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'postgres'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
+# Use SQLite for testing
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

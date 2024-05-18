@@ -7,16 +7,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 from . forms import CreateUserForm, LoginForm, ProfileForm
-
 from django.contrib.auth.decorators import login_required
-
 from .forms import CreateUserForm
-
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate
 from django.views import View
@@ -104,24 +99,6 @@ def user_profile(request, id):
     # Render the user profile template with the context data
     return render(request, 'authenticate/user-profile.html', context)
 
-'''
-from django.contrib.auth.models import User
-def create_user_and_profile(request):
-    # Create a new user
-    user = User.objects.create(username='example_user', email='user@example.com')
-    
-    # Create a profile for the user
-    profile = Profile.objects.create(
-        user=user,
-        name='Example User',
-        bio='This is a bio',
-        birth_date=None,  # Set to whatever is appropriate
-        location='41.0255493,28.9742571',  # Set to default location
-        picture='example.jpg',  # Set to default picture
-        unreadcount=0  # Set to default unread count
-    )
-    return render(request, 'authenticate/user-profile.html', profile)
-'''
 
 @login_required(login_url="my-login")
 def view_profile(request, id):
@@ -169,3 +146,18 @@ def edit_profile(request, id):
 
     # Render the edit profile template with the form
     return render(request, 'authenticate/edit-profile.html', {'form': form})
+
+@login_required
+def disable_profile(request, id):
+    # Retrieve the profile object to disable
+    profile = get_object_or_404(Profile, pk=id)
+
+    # Check if the current user is the owner or a moderator
+    if request.user == profile.user.admin:
+        # Disable the profile
+        profile.is_disabled = True
+        profile.save()
+        return JsonResponse({'success': True}, messages.success(request, f'Profile disabled successfully.'))
+    else:
+        # If the user is not authorized, return a JSON response with an error message
+        return JsonResponse({'success': False, 'message': 'You are not authorized to disable this profile.'})

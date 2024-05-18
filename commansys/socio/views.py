@@ -31,7 +31,6 @@ class CommunityCreateView(LoginRequiredMixin, View):
             new_community = form.save(commit=False)
             new_community.owner = request.user
             new_community.save()
-
             messages.success(request, 'Community creation is successful. Click My Communities to see your community.')
         context = {
             'community_list': communities,
@@ -228,7 +227,7 @@ def create_template(request, community_id):
         
         template.fields.add(*all_items)
         messages.success(request, "Template created successfully.")
-        return redirect('create_template', community_id=community_id)
+        return redirect('community_detail', community_id=community_id)
     else:
         # Handle GET request
         form = PostTemplateItemForm()
@@ -493,3 +492,4 @@ def follow_unfollow(request):
         
     # If the request method is not POST or post_id is not provided, return a JsonResponse with an error message
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
