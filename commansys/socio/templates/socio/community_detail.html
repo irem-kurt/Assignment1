@@ -62,6 +62,9 @@
                 <input id="post-search-input" class="form-control me-2" type="search" name="search" placeholder="Search in Posts" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+            {% if templates  %}
+                <a href="{% url 'community-advanced-search' community_id=community.id %}" class="btn btn-outline-success">Advanced Search</a>
+            {% endif %}
         {% endif %}
     </div>
 

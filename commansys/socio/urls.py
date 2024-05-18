@@ -22,6 +22,7 @@ urlpatterns = [
     path('community/make_remove_manager/', views.make_remove_manager, name='make_remove_manager'),
     path('community/<int:community_id>/requests/', views.display_requests, name='display_requests'),
     path('community/<int:community_id>/followers/', views.display_followers, name='display_followers'),
+    path('community/<int:community_id>/advanced_search', views.advanced_search, name='community-advanced-search'),
     path('community/<int:community_id>/', views.community_detail, name='community_detail'),
     path('user/follow_unfollow/', views.follow_unfollow, name="follow_unfollow"),
 ]

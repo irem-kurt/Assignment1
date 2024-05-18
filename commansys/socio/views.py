@@ -6,7 +6,7 @@ from django.views import View
 from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import Community, Post, PostTemplate, PostTemplateItem, Comment
+from .models import Community, Post, PostTemplate, PostTemplateItem, Comment, PostTemplateItemType
 from .forms import CommunityForm, DefaultPostForm, PostTemplateItemForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -71,7 +71,7 @@ class AllCommunitiesView(LoginRequiredMixin, View):
             'communities_count': communities_count,
             'current_time': current_time,
         }
-        print("irem")
+
         return render(request, 'socio/allcommunities.html', context)
 
 
@@ -99,8 +99,7 @@ def home(request):
         ruled = Community.objects.filter(rules__icontains=search_query).order_by('-createdDate')
         communities = named.union(descripted, ruled)
     else:
-        communities = Community.objects.all().order_by('-createdDate')
-
+        communities = Community.objects.all().order_by('-createdDate')    
     return render(request, 'socio/home.html', {'search_term': search_query, 'communities': communities})
 
 
@@ -253,6 +252,14 @@ def community_detail(request, community_id):
     is_admin = request.user == community.owner or request.user in community.managers.all()
     is_member = is_admin or request.user in community.followers.all()
     
+    templates = PostTemplate.objects.filter(community_id=community_id)
+    search_templates = []
+    for template in templates:
+        for field in template.fields.all():
+            if field.post_type == 'text':
+                search_templates.append(template)
+                break
+                    
     if request.method == 'POST':
         search_query = request.POST.get('search', '')
         print(search_query)
@@ -265,7 +272,8 @@ def community_detail(request, community_id):
                 'is_member': is_member,
                 'is_admin': is_admin,
                 'is_pending': is_pending,
-                'search_term': search_query})
+                'search_term': search_query,
+                'templates': search_templates,})
     
     posts = Post.objects.filter(communit_id=community_id)
     return render(request, 'socio/community_detail.html', 
@@ -273,8 +281,76 @@ def community_detail(request, community_id):
                 'posts': posts,
                 'is_member': is_member,
                 'is_admin': is_admin,
-                'is_pending': is_pending,})
+                'is_pending': is_pending,
+                'templates': search_templates,})
+    
+@login_required
+def advanced_search(request, community_id):
+    community = get_object_or_404(Community, id=community_id)
+    is_admin = request.user == community.owner or request.user in community.managers.all()
+    is_member = is_admin or request.user in community.followers.all()
 
+    if not community or not (is_member or is_admin):
+        return redirect(reverse('home'))
+
+    templates = PostTemplate.objects.filter(community_id=community_id)
+    search_templates = [template for template in templates if template.fields.filter(post_type='text').exists()]
+    print(search_templates)
+    
+    if request.method == 'POST':
+        template_id = request.POST.get('template_id')
+        template_selected = get_object_or_404(PostTemplate, id=template_id)
+
+        # Get non-empty search terms for text fields
+        search_terms = {}
+        for field in template_selected.fields.filter(post_type='text'):
+            field_name = f'field_{field.name}'
+            print(f'field: {field.name} {field.id}')
+            print(f'irem {field_name} {request.POST.get(field_name)}')
+            search_terms[field_name] = request.POST.get(field_name)
+
+        if not any(search_terms.values()):
+            print('No search terms provided')
+            return render(request, 'socio/community_advanced_search.html', {
+                'community': community,
+                'template_selected': template_selected,
+                'templates': search_templates,
+                'template_fields': template_selected.fields.filter(post_type='text'),
+            })
+
+        # Filter posts based on search terms
+        q_objects = Q()
+        for field_name, search_term in search_terms.items():
+            print(f'field_name: {field_name}, search_term: {search_term}')
+            if search_term:
+                v = field_name.split('_')[-1]
+                print(f'id {v}')
+                q_objects |= Q(fields__name=field_name.split('_')[-1], fields__text__icontains=search_term)
+        print(f'q_objects: {q_objects}')
+        if q_objects:
+            search_results = Post.objects.filter(communit_id=community, template=template_selected).filter(q_objects)
+
+        print(f'search_results: {search_results}')
+        
+        s = Post.objects.filter(communit_id=community, template=template_selected)
+        for res in s:
+            print(f'res: {res.fields.filter(post_type="text").values()}')
+        
+        # Pass template fields to the template context
+        template_fields = template_selected.fields.filter(post_type='text')
+        
+        return render(request, 'socio/community_advanced_search.html', {
+            'community': community,
+            'template_selected': template_selected,
+            'template_fields': template_fields,
+            'search_results': search_results,
+        })
+
+    # If not a POST request, render the template normally
+    return render(request, 'socio/community_advanced_search.html', {
+        'community': community,
+        'templates': search_templates,
+    })
 
 @login_required
 def post_detail(request, slug):

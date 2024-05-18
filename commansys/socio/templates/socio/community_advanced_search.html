@@ -1,0 +1,117 @@
+{% extends "authenticate/base.html" %}
+{% load static %}
+
+{% block body_content %}
+    <!-- Community Details -->
+    <div class="container">
+        <div class="community-details">
+            <h1>{{ community.name }}</h1>
+            <!-- Display image -->
+            <img src="{{ community.picture.url }}" alt="{{ community.name }}" style="max-width: 100%; height: auto;">
+            <p>Description: {{ community.description }}</p>
+            <!-- Display location -->
+            <p>Location: {{ community.location }}</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 15px; border: 1px solid black; border-radius: 12px;">
+        <p style="margin-top: 10px;">Templates</p>
+        {% for template in templates %}
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="template_id" value="{{ template.id }}">
+                <button type="submit" class="btn btn-outline-success">{{ template.name }}</button>
+            </form>
+        {% endfor %}
+    </div>
+
+    <!-- Display Template Search -->
+    <div class="container">
+        {% if template_selected %}
+            <h2>Search in {{ template_selected.name }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="template_id" value="{{ template_selected.id }}">
+                {% for field in template_fields %}
+                    <label>{{ field.name }}</label><br>
+                    <input type="text" name="field_{{ field.name }}"><br>
+                {% endfor %}
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        {% endif %}
+
+        {% if search_results %}
+            <h2>Search Results</h2>
+            <ul>
+                {% for post in search_results %}
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">{{ post.author.username }}👤 </p>
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content }}</p>
+
+                            <!-- Content based on post fields -->
+                            {% for field in post.fields.all %}
+                                {% if field.name %}
+                                    <label>{{ field.name }}</label><br>
+                                {% endif %}
+                                <div> <!-- Wrap content in a div -->
+                                    {% if field.post_type == 'text' %}
+                                        <p>{{ field.text }}</p>
+                                    {% elif field.post_type == 'image' %}
+                                        <img src="{{ field.image.url }}" alt="Image">
+                                    {% elif field.post_type == 'video' %}
+                                        <video controls>
+                                            <source src="{{ field.video.url }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    {% elif field.post_type == 'audio' %}
+                                        <audio controls>
+                                            <source src="{{ field.audio.url }}" type="audio/mp3">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    {% elif field.post_type == 'location' %}
+                                        <p>{{ field.location }}</p>
+                                        <!-- Leaflet map container -->
+                                        <div id="map-{{ post.id }}-{{ forloop.counter }}" class="map" style="height: 200px; width: 200px; margin-top: 10px;" data-location="{{ field.location }}"></div>
+                                    {% elif field.post_type == 'datetime' %}
+                                        <p>{{ field.date }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <!-- Like button and count -->
+                            <button type="button" class="btn btn-primary like-btn" data-post-id="{{ post.id }}">Like</button>
+                            <p style="display: inline; margin-left: 5px;" class="like-count">{{ post.likes.count }}</p>
+                            <!-- Dislike button and count -->
+                            <button type="button" class="btn btn-primary dislike-btn" data-post-id="{{ post.id }}">Dislike</button>
+                            <p style="display: inline; margin-left: 5px;" class="dislike-count">{{ post.dislikes.count }}</p>
+
+                            <!-- Comments section -->
+                            <h6>Comments</h6>
+                            <ul>
+                                {% for comment in post.comments.all %}
+                                    <li>{{ comment.author.username }}: {{ comment.text }}</li>
+                                {% endfor %}
+                            </ul>
+                            <!-- Form to submit new comments -->
+                            <form>
+                                <!-- Add text input for comment -->
+                                <input type="text" id="comment-text-{{ post.id }}" placeholder="Enter your comment">
+                                <!-- Add comment button with post ID data attribute -->
+                                <button type="button" class="btn btn-primary submit-comment-btn" data-post-id="{{ post.id }}">Add Comment</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </ul>
+        {% else %}    
+            <p style="margin-top: 10px;">No Result</p>
+        {% endif %}
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'community_detail.js' %}"></script>
+{% endblock %}
