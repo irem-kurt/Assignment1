@@ -57,8 +57,6 @@ class CreatePostViewTest(TestCase):
         self.test_user1 = User.objects.create_user(username='testuser1', password='1X<ISRUkw+tuK')
         self.test_user1.save()
 
-
-        # Assuming Profile model exists
         user_profile = Profile.objects.create(user=self.test_user1, name="Test User")
         user_profile.save()
         self.test_user1.profile = user_profile
