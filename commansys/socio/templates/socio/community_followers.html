@@ -53,7 +53,7 @@
                             </div>
                             <!-- User Info -->
                             <div>
-                                <p class="mb-1 font-weight-bold">{{ user.username }}</p>
+                                <a href="{% url 'user-profile' user.id %}" class="mb-1 font-weight-bold">{{ user.username }}</a>
                                 {% if user in community.managers.all %}
                                 <i class="fas fa-user text-primary"></i>
                                 {% endif %}

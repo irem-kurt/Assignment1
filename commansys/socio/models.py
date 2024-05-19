@@ -55,7 +55,7 @@ class PostTemplateItem(models.Model):
 
 class PostTemplate(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    fields = models.ManyToManyField(PostTemplateItem, related_name='post_templates') #Hangi form itemleri olduğunu tutuyor gerçek değerleri yok
+    fields = models.ManyToManyField(PostTemplateItem, related_name='post_templates') # Hangi form itemleri olduğunu tutuyor gerçek değerleri yok
     community = models.ForeignKey(Community, on_delete=models.CASCADE, null=False)
     
     class Meta:
@@ -72,7 +72,7 @@ class Comment(models.Model):
         
 class Post(models.Model):
     template = models.ForeignKey(PostTemplate, on_delete=models.CASCADE, null=True, blank=True)
-    fields = models.ManyToManyField(PostTemplateItem, related_name='posts') #Hangi form itemleri olduğunu gerçek değerleriyle tutuyor
+    fields = models.ManyToManyField(PostTemplateItem, related_name='posts') # Hangi form itemleri olduğunu gerçek değerleriyle tutuyor
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     slug = models.SlugField(default="", null=False, blank=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)

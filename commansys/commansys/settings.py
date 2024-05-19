@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django.contrib.sites',
     'crispy_forms',
     'allauth',
     'django_static_fontawesome',
@@ -46,13 +45,6 @@ INSTALLED_APPS = [
     'location_field.apps.DefaultConfig'
     
 ]
-LOCATION_FIELD = {
-    'provider.google.api': '//maps.google.com/maps/api/js?sensor=false',
-    'provider.google.api_key': 'AIzaSyCCMF-2zpHGf_H_5mpYCmSShHkCwmZbZXY',
-    'provider.google.api_libraries': '',
-    'provider.google.map.type': 'ROADMAP',
-}
-
 
 
 MIDDLEWARE = [

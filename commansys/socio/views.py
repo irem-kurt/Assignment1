@@ -39,37 +39,15 @@ class CommunityCreateView(LoginRequiredMixin, View):
         return render(request, 'socio/communitycreate.html', context)
 
 
-class CreatedCommunitiesView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        communities = Community.objects.filter(owner=request.user).order_by('-createdDate')
-        form = CommunityForm()  
-        number_of_created_communities = len(communities)
-        current_time = timezone.now()
-        context = {
-            'communities': communities,
-            'form': form,  # Pass the form to the template
-            'number_of_created_communities': number_of_created_communities,
-            'current_time': current_time,
-        }
-        return render(request, 'socio/createdcommunities.html', context)    
-
 class AllCommunitiesView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         following = Community.objects.filter(Q(followers__in=[request.user])).order_by('-createdDate')
         owning = Community.objects.filter(Q(owner=request.user)).order_by('-createdDate')
-        print(len(following))
-        for i in following:
-            print(i.owner)
-        print(len(owning))
-        for i in owning:
-            print(i.name)
         communities = following.union(owning)
         communities_count = len(communities)
-        current_time = timezone.now()
         context = {
             'communities': communities,
             'communities_count': communities_count,
-            'current_time': current_time,
         }
 
         return render(request, 'socio/allcommunities.html', context)
@@ -178,7 +156,7 @@ def create_custom_post(request, community_id, template_id):
                 post.fields.add(item)
             elif field.mandatory:
                 print(f'Mandatory field {field.name} is missing {field.mandatory}')
-                post.delete()
+                post.delete() # Delete the post if a mandatory field is missing
                 # If a mandatory field is missing, display an error message
                 error_message = f"Please fill in the '{field.name}' field."
                 return render(request, 'socio/create_custom_post.html', {'community': community, 'template': template, 'error_message': error_message})
@@ -238,6 +216,7 @@ def create_template(request, community_id):
         return render(request, 'socio/create_template.html', context)
 
 
+@login_required
 def community_detail(request, community_id): 
     community = get_object_or_404(Community,id=community_id)
     is_pending = request.user in community.requests.all()
@@ -253,6 +232,7 @@ def community_detail(request, community_id):
     is_admin = request.user == community.owner or request.user in community.managers.all()
     is_member = is_admin or request.user in community.followers.all()
     
+    # Get and set all advanced searchable templates
     templates = PostTemplate.objects.filter(community_id=community_id)
     search_templates = []
     for template in templates:
@@ -306,8 +286,6 @@ def advanced_search(request, community_id):
         search_terms = {}
         for field in template_selected.fields.filter(post_type='text'):
             field_name = f'field_{field.name}'
-            print(f'field: {field.name} {field.id}')
-            print(f'irem {field_name} {request.POST.get(field_name)}')
             search_terms[field_name] = request.POST.get(field_name)
 
         if not any(search_terms.values()):
@@ -322,20 +300,11 @@ def advanced_search(request, community_id):
         # Filter posts based on search terms
         q_objects = Q()
         for field_name, search_term in search_terms.items():
-            print(f'field_name: {field_name}, search_term: {search_term}')
             if search_term:
                 v = field_name.split('_')[-1]
-                print(f'id {v}')
                 q_objects |= Q(fields__name=field_name.split('_')[-1], fields__text__icontains=search_term)
-        print(f'q_objects: {q_objects}')
         if q_objects:
             search_results = Post.objects.filter(communit_id=community, template=template_selected).filter(q_objects)
-
-        print(f'search_results: {search_results}')
-        
-        s = Post.objects.filter(communit_id=community, template=template_selected)
-        for res in s:
-            print(f'res: {res.fields.filter(post_type="text").values()}')
         
         # Pass template fields to the template context
         template_fields = template_selected.fields.filter(post_type='text')
@@ -353,35 +322,6 @@ def advanced_search(request, community_id):
         'templates': search_templates,
     })
 
-@login_required
-def post_detail(request, slug):
-    post = get_object_or_404(Post, slug=slug)
-    # You can add additional context data here if needed
-    return render(request, 'socio/post_detail.html', {'post': post})
-
-
-
-@login_required
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-    else:
-        post.likes.add(request.user)
-        post.dislikes.remove(request.user) if request.user in post.dislikes.all() else None
-    # Redirect back to the post detail page
-    return HttpResponseRedirect(reverse('postDetailUrl', kwargs={'slug': post.slug}))
-
-@login_required
-def dislike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.user in post.dislikes.all():
-        post.dislikes.remove(request.user)
-    else:
-        post.dislikes.add(request.user)
-        post.likes.remove(request.user) if request.user in post.likes.all() else None
-    # Redirect back to the post detail page
-    return HttpResponseRedirect(reverse('postDetailUrl', kwargs={'slug': post.slug}))
 
 
 @login_required
