@@ -3,7 +3,8 @@ services:
     build: .
     command: sh -c "python manage.py makemigrations socio && python manage.py migrate socio && python manage.py makemigrations authenticate && python manage.py migrate authenticate && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/code
+      - .:/app
+      - ./media:/app/media
     ports:
       - "8000:8000"
     depends_on:
@@ -12,6 +13,6 @@ services:
   postgres:
     image: postgres:14
     ports:
-      - "5432"
+      - "5432:5432"
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
