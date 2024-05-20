@@ -365,14 +365,19 @@ def add_comment(request):
 @login_required
 def community_join(request):
     if request.method == 'POST':
+        print("Joining community")
         community_id = request.POST.get('community_id')
+        print("community_id = " + community_id)
         if community_id:
             community = get_object_or_404(Community, id=community_id)
+            print("community name = " + community.name + " " + str(community.is_private) + " " + str(request.user in community.followers.all()) + " " + str(community.is_private and request.user not in community.followers.all()))
             if community and request.user not in community.followers.all() and not community.is_private:
+                print("followers = " + str(community.followers.all()))
                 community.followers.add(request.user)
                 community.save()
+                print("success")
                 return JsonResponse({'success': True})
-        
+    print("failed to join community")    
     # If the request method is not POST or post_id is not provided, return a JsonResponse with an error message
     return JsonResponse({'success': False, 'message': 'User cannot join community'})
 
