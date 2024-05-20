@@ -16,6 +16,7 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'community-create' %}" class="btn btn-primary">Create Community</a>
             {% endif %}
+            
         </div>
         {% if search_term %}
             <h2>Search Results for "{{ search_term }} ..."</h2>

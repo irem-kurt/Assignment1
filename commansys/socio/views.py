@@ -223,6 +223,7 @@ def community_detail(request, community_id):
     if not request.user.is_authenticated:
         error_message = 'You must be logged in or registered to view this page.'
         return redirect('{}?error_message={}'.format(reverse('my-login'), error_message))
+        
 
     if is_pending:
         return render(request, 'socio/community_detail.html', 
